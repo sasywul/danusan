@@ -10,9 +10,12 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isAdminMode, setIsAdminMode] = useState(false);
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setLoading(true);
     setError('');
+
+    const formData = new FormData(e.currentTarget);
 
     // Pre-process FormData based on active mode
     if (!isAdminMode) {
@@ -92,7 +95,7 @@ export default function LoginPage() {
           )}
 
           {/* Login Form */}
-          <form action={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {!isAdminMode ? (
               /* MEMBER MODE FORM (Default) - Only Member Code */
               <div className="animate-fade-in">
