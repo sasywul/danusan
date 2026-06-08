@@ -41,7 +41,6 @@ export default function LoginPage() {
       const result = await login(formData);
       if (result?.error) {
         setError(result.error);
-        setLoading(false);
       }
     } catch (e) {
       // redirect() throws a NEXT_REDIRECT error which is expected
@@ -49,8 +48,9 @@ export default function LoginPage() {
       const msg = e instanceof Error ? e.message : 'Terjadi kesalahan.';
       if (!msg.includes('NEXT_REDIRECT')) {
         setError(msg);
-        setLoading(false);
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -166,16 +166,16 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-usm-primary to-usm-primary-light text-white font-bold rounded-xl hover:from-usm-primary-dark hover:to-usm-primary active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-md shadow-usm-primary/20 flex items-center justify-center gap-2 mt-2"
+              className="w-full py-3 px-4 bg-gradient-to-r from-usm-primary to-usm-primary-light text-white font-bold rounded-xl hover:from-usm-primary-dark hover:to-usm-primary active:scale-[0.98] disabled:from-blue-400 disabled:to-blue-400/80 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-md shadow-usm-primary/20 flex items-center justify-center mt-2 cursor-pointer"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
                   Memproses...
                 </>
               ) : (
                 <>
-                  <KeyRound className="w-4 h-4" />
+                  <KeyRound className="w-4 h-4 mr-2" />
                   {isAdminMode ? 'Masuk Panel Admin' : 'Masuk Jualan'}
                 </>
               )}
