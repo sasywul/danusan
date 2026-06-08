@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { voidTransaction } from '@/actions/penjualan';
 import { useRouter } from 'next/navigation';
 import { Clock, History, Loader2, X, RefreshCw } from 'lucide-react';
@@ -28,6 +29,11 @@ export function SalesHistory({ initialSales }: SalesHistoryProps) {
   const [todaySales, setTodaySales] = useState<SaleItem[]>([]);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     // Filter to only today's transactions in user's local timezone
@@ -156,12 +162,13 @@ export function SalesHistory({ initialSales }: SalesHistoryProps) {
       </div>
 
       {/* ==================== TOAST NOTIFICATION — Fixed to viewport ==================== */}
-      {toastMessage && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4 pointer-events-none">
-          <div className="bg-text-primary text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl animate-fade-in pointer-events-auto text-center flex items-center justify-center gap-2">
+      {mounted && toastMessage && createPortal(
+        <div className="fixed bottom-24 left-0 right-0 mx-auto w-[90%] max-w-sm z-[9999] pointer-events-auto">
+          <div className="bg-text-primary text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl animate-fade-in text-center flex items-center justify-center gap-2">
             <span>{toastMessage}</span>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

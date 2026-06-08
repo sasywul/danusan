@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { recordSale } from '@/actions/penjualan';
 import { useRouter } from 'next/navigation';
 import { Plus, Minus, Check, Package, Loader2, Undo2, ShoppingBag } from 'lucide-react';
@@ -39,8 +40,13 @@ export function MemberSalesView({ initialProducts }: MemberSalesViewProps) {
   const [pendingSales, setPendingSales] = useState<PendingSale[]>([]);
   const [sendingProducts, setSendingProducts] = useState<Set<string>>(new Set());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const pendingSalesRef = useRef(pendingSales);
   pendingSalesRef.current = pendingSales;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Sync stok when server data changes
   useEffect(() => {
@@ -239,23 +245,25 @@ export function MemberSalesView({ initialProducts }: MemberSalesViewProps) {
       )}
 
       {/* ==================== UNDO TOAST — Fixed to viewport ==================== */}
-      {pendingSales.length > 0 && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4 pointer-events-none">
+      {mounted && pendingSales.length > 0 && createPortal(
+        <div className="fixed bottom-24 left-0 right-0 mx-auto w-[90%] max-w-sm z-[9999] pointer-events-auto">
           <div className="space-y-2">
             {pendingSales.map((ps) => (
               <UndoToastItem key={ps.tempId} pending={ps} onCancel={cancelPendingSale} />
             ))}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ==================== STATUS TOAST — Fixed to viewport ==================== */}
-      {toastMessage && !pendingSales.length && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-4 pointer-events-none">
-          <div className="bg-text-primary text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl animate-fade-in pointer-events-auto text-center">
+      {mounted && toastMessage && !pendingSales.length && createPortal(
+        <div className="fixed bottom-24 left-0 right-0 mx-auto w-[90%] max-w-sm z-[9999] pointer-events-auto">
+          <div className="bg-text-primary text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl animate-fade-in text-center">
             {toastMessage}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

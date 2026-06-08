@@ -47,12 +47,12 @@ export default function MemberLayout({
       </header>
 
       {/* Main content */}
-      <main className="flex-1 max-w-lg mx-auto w-full px-4 py-4">
+      <main className="flex-1 max-w-lg mx-auto w-full px-4 py-4 pb-32">
         {children}
       </main>
 
       {/* Bottom navigation */}
-      <nav className="sticky bottom-0 bg-white border-t border-border safe-area-inset-bottom z-10">
+      <nav className="fixed bottom-0 left-0 w-full z-50 bg-white border-t border-border safe-area-inset-bottom">
         <div className="max-w-lg mx-auto flex">
           {navItems.map((item) => {
             const isActive =
