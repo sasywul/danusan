@@ -1,73 +1,88 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { Eye, Clock, TrendingUp, Package, CheckCircle2, AlertTriangle, HelpCircle, ArrowRight } from 'lucide-react';
+import { Eye, Clock, TrendingUp, HelpCircle, ArrowRight } from 'lucide-react';
 
 export const revalidate = 0; // Always fetch fresh real-time data
-
-interface PantauRecord {
-  member_id: string;
-  nama_member: string;
-  nama_produk: string;
-  jumlah_diambil: number;
-  jumlah_laku: number;
-  sisa_bawaan: number;
-  omzet_sementara: number;
-  waktu_laporan_terakhir: string | null;
-}
 
 interface GroupedMember {
   member_id: string;
   nama_member: string;
   total_omzet: number;
+  total_terjual: number;
   terakhir_aktif: string | null;
-  items: PantauRecord[];
+  items: {
+    nama_produk: string;
+    jumlah_laku: number;
+    subtotal_omzet: number;
+  }[];
 }
 
 export default async function AdminMonitoringPage() {
   const supabase = await createClient();
 
-  // Query database view: pantau_member
-  // Ordered by nama_member (ascending) and waktu_laporan_terakhir (descending)
-  const { data, error } = await supabase
-    .from('pantau_member')
-    .select('*')
-    .order('nama_member', { ascending: true })
-    .order('waktu_laporan_terakhir', { ascending: false });
+  // Fetch all profiles where role = 'member' and all penjualan records
+  const [profilesRes, penjualanRes] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('id, nama_lengkap')
+      .eq('role', 'member')
+      .order('nama_lengkap', { ascending: true }),
+    supabase
+      .from('penjualan')
+      .select('id, user_id, product_id, jumlah, harga_satuan, total_harga, created_at, products(nama_produk)')
+      .order('created_at', { ascending: false }),
+  ]);
 
-  let memberGroups: GroupedMember[] = [];
+  const error = profilesRes.error || penjualanRes.error;
+  const profiles = profilesRes.data || [];
+  const penjualan = penjualanRes.data || [];
 
-  if (data) {
-    const grouped: Record<string, GroupedMember> = {};
+  // Group and aggregate data in memory
+  const memberGroups: GroupedMember[] = profiles.map((profile) => {
+    const memberSales = penjualan.filter((p) => p.user_id === profile.id);
 
-    for (const row of data as PantauRecord[]) {
-      if (!grouped[row.nama_member]) {
-        grouped[row.nama_member] = {
-          member_id: row.member_id,
-          nama_member: row.nama_member,
-          total_omzet: 0,
-          terakhir_aktif: null,
-          items: [],
-        };
+    const productMap = new Map<
+      string,
+      { nama_produk: string; jumlah_laku: number; subtotal_omzet: number }
+    >();
+    let totalOmzet = 0;
+    let totalTerjual = 0;
+    let terakhirAktif: string | null = null;
+
+    for (const sale of memberSales) {
+      totalOmzet += sale.total_harga || 0;
+      totalTerjual += sale.jumlah || 0;
+      if (!terakhirAktif || new Date(sale.created_at) > new Date(terakhirAktif)) {
+        terakhirAktif = sale.created_at;
       }
-      grouped[row.nama_member].items.push(row);
-      grouped[row.nama_member].total_omzet += row.omzet_sementara;
 
-      // Find the latest time reported across all items for this member
-      if (row.waktu_laporan_terakhir) {
-        if (
-          !grouped[row.nama_member].terakhir_aktif ||
-          new Date(row.waktu_laporan_terakhir) > new Date(grouped[row.nama_member].terakhir_aktif!)
-        ) {
-          grouped[row.nama_member].terakhir_aktif = row.waktu_laporan_terakhir;
-        }
+      const prodId = sale.product_id;
+      const prodName = (sale.products as unknown as { nama_produk: string } | null)?.nama_produk || 'Produk';
+      const existing = productMap.get(prodId);
+
+      if (existing) {
+        existing.jumlah_laku += sale.jumlah || 0;
+        existing.subtotal_omzet += sale.total_harga || 0;
+      } else {
+        productMap.set(prodId, {
+          nama_produk: prodName,
+          jumlah_laku: sale.jumlah || 0,
+          subtotal_omzet: sale.total_harga || 0,
+        });
       }
     }
 
-    // Sort alphabetically by member name (Object.values order is usually preserved but sorting is safer)
-    memberGroups = Object.values(grouped).sort((a, b) =>
-      a.nama_member.localeCompare(b.nama_member)
-    );
-  }
+    return {
+      member_id: profile.id,
+      nama_member: profile.nama_lengkap,
+      total_omzet: totalOmzet,
+      total_terjual: totalTerjual,
+      terakhir_aktif: terakhirAktif,
+      items: Array.from(productMap.values()).sort((a, b) =>
+        a.nama_produk.localeCompare(b.nama_produk)
+      ),
+    };
+  });
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -80,7 +95,7 @@ export default async function AdminMonitoringPage() {
           <div>
             <h2 className="text-xl font-bold text-text-primary">Pantau Member</h2>
             <p className="text-xs text-text-muted mt-0.5">
-              Pantau alokasi barang bawaan, penjualan, dan omzet per individu secara real-time.
+              Pantau total penjualan, omzet, dan keaktifan member secara real-time.
             </p>
           </div>
         </div>
@@ -95,18 +110,18 @@ export default async function AdminMonitoringPage() {
           <UsersIcon className="w-16 h-16 mx-auto text-text-muted/30 mb-4" />
           <h4 className="text-lg font-bold text-text-primary">Tidak Ada Data Member</h4>
           <p className="text-sm text-text-secondary mt-1">
-            Belum ada member aktif yang sedang memegang atau menjual barang bawaan.
+            Belum ada member aktif yang terdaftar di sistem.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-children">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 stagger-children">
           {memberGroups.map((member) => (
             <div
               key={member.member_id}
-              className="bg-white rounded-3xl border border-border shadow-sm hover:shadow-md transition-all flex flex-col justify-between overflow-hidden"
+              className="bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-all flex flex-col justify-between overflow-hidden"
             >
-              {/* Card Header */}
-              <div className="p-5 border-b border-border bg-gradient-to-r from-surface to-surface-alt flex items-center justify-between">
+              {/* Card Content */}
+              <div className="p-5 flex-grow space-y-4">
                 <div>
                   <h4 className="font-extrabold text-text-primary text-base leading-tight">
                     <Link
@@ -117,7 +132,7 @@ export default async function AdminMonitoringPage() {
                     </Link>
                   </h4>
                   {member.terakhir_aktif ? (
-                    <p className="text-3xs text-text-muted flex items-center gap-1 mt-1 font-medium">
+                    <p className="text-[10px] text-text-muted flex items-center gap-1 mt-1.5 font-medium">
                       <Clock className="w-3.5 h-3.5" />
                       Aktif:{' '}
                       {new Date(member.terakhir_aktif).toLocaleDateString('id-ID', {
@@ -128,89 +143,32 @@ export default async function AdminMonitoringPage() {
                       })}
                     </p>
                   ) : (
-                    <p className="text-3xs text-text-muted flex items-center gap-1 mt-1 font-medium">
+                    <p className="text-[10px] text-text-muted flex items-center gap-1 mt-1.5 font-medium">
                       <Clock className="w-3.5 h-3.5" />
                       Belum aktif mencatat
                     </p>
                   )}
                 </div>
-                
+
                 {/* Revenue Badge */}
-                <div className="text-right flex flex-col items-end">
+                <div className="flex flex-col">
                   <span className="text-[9px] uppercase font-bold text-text-muted tracking-wider">
-                    Omzet Sementara
+                    Total Omzet
                   </span>
-                  <span className="inline-flex items-center gap-1 mt-0.5 px-3 py-1 bg-success-bg border border-success/15 rounded-xl text-sm font-extrabold text-success">
+                  <span className="inline-flex items-center gap-1 mt-1 px-3 py-1 bg-success-bg border border-success/15 rounded-xl text-sm font-extrabold text-success w-fit">
                     <TrendingUp className="w-3.5 h-3.5" />
                     Rp {member.total_omzet.toLocaleString('id-ID')}
                   </span>
                 </div>
               </div>
 
-              {/* Card Body Table */}
-              <div className="p-4 flex-grow overflow-x-auto">
-                <table className="w-full text-xs text-left">
-                  <thead>
-                    <tr className="text-text-secondary border-b border-border/80">
-                      <th className="pb-2.5 font-bold text-text-muted">Nama Produk</th>
-                      <th className="pb-2.5 text-center font-bold text-text-muted w-12">Bawa</th>
-                      <th className="pb-2.5 text-center font-bold text-text-muted w-12">Laku</th>
-                      <th className="pb-2.5 text-center font-bold text-text-muted w-12">Sisa</th>
-                      <th className="pb-2.5 text-center font-bold text-text-muted w-24">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/60">
-                    {member.items.map((item, idx) => {
-                      const isSoldOut = item.sisa_bawaan === 0;
-                      const isLowStock = item.sisa_bawaan > 0 && item.sisa_bawaan <= 3;
-                      return (
-                        <tr key={idx} className="hover:bg-surface-alt/20 transition-colors">
-                          <td className="py-3 font-semibold text-text-primary">
-                            {item.nama_produk}
-                          </td>
-                          <td className="py-3 text-center text-text-secondary font-medium">
-                            {item.jumlah_diambil}
-                          </td>
-                          <td className="py-3 text-center font-bold text-success">
-                            {item.jumlah_laku}
-                          </td>
-                          <td className="py-3 text-center font-extrabold">
-                            <span className={isSoldOut ? 'text-text-muted line-through' : isLowStock ? 'text-warning' : 'text-text-primary'}>
-                              {item.sisa_bawaan}
-                            </span>
-                          </td>
-                          <td className="py-3 text-center">
-                            {isSoldOut ? (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-success-bg text-success text-[10px] font-extrabold uppercase tracking-wide">
-                                <CheckCircle2 className="w-3 h-3" />
-                                Habis Terjual
-                              </span>
-                            ) : isLowStock ? (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-warning-bg text-warning text-[10px] font-extrabold uppercase tracking-wide">
-                                <AlertTriangle className="w-3 h-3" />
-                                Sisa Sedikit
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-info-bg text-info text-[10px] font-extrabold uppercase tracking-wide">
-                                <Package className="w-3 h-3" />
-                                Tersedia
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-
               {/* Card Footer */}
-              <div className="px-5 py-3.5 bg-surface-alt border-t border-border flex items-center justify-end">
+              <div className="px-5 py-3 bg-surface-alt border-t border-border">
                 <Link
                   href={`/admin/members/${member.member_id}`}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-usm-primary hover:bg-usm-primary-dark text-white rounded-xl text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
+                  className="w-full text-center inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-usm-primary hover:bg-usm-primary-dark text-white rounded-xl text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
                 >
-                  Kelola Stok & Detail
+                  Kelola & Detail
                   <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </Link>
               </div>
