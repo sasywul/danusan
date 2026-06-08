@@ -141,6 +141,8 @@ export default async function SettlementPage() {
           </div>
         )}
       </div>
+      {/* Spacer agar tidak terhalang bottom nav */}
+      <div className="h-36 w-full shrink-0"></div>
     </div>
   );
 }

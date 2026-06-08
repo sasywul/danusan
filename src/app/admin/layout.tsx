@@ -64,10 +64,10 @@ function SidebarContent({
               key={item.href}
               href={item.href}
               onClick={onNavigate}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group ${
+              className={`flex items-center gap-3 py-3 pr-4 pl-3.5 text-sm font-medium transition-all group border-l-4 ${
                 isActive
-                  ? 'bg-white/15 text-white shadow-sm'
-                  : 'text-white/60 hover:text-white hover:bg-white/5'
+                  ? 'bg-white/10 text-white shadow-sm border-usm-accent rounded-r-xl'
+                  : 'text-white/60 hover:text-white hover:bg-blue-800 border-transparent rounded-r-xl'
               }`}
             >
               <item.icon className={`w-5 h-5 ${isActive ? 'text-usm-accent' : 'text-white/40 group-hover:text-white/70'}`} />

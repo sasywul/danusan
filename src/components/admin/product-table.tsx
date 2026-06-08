@@ -92,23 +92,23 @@ export function ProductTable({ products }: ProductTableProps) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-surface-alt">
-                  <th className="text-left px-5 py-3 font-semibold text-text-secondary">
+                <tr className="bg-surface-alt border-b border-border">
+                  <th className="text-left px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                     Nama Produk
                   </th>
-                  <th className="text-center px-5 py-3 font-semibold text-text-secondary">
+                  <th className="text-center px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                     Stok Gudang
                   </th>
-                  <th className="text-right px-5 py-3 font-semibold text-text-secondary">
+                  <th className="text-right px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                     Harga Modal
                   </th>
-                  <th className="text-right px-5 py-3 font-semibold text-text-secondary">
+                  <th className="text-right px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                     Harga Jual
                   </th>
-                  <th className="text-center px-5 py-3 font-semibold text-text-secondary">
+                  <th className="text-center px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="text-center px-5 py-3 font-semibold text-text-secondary">
+                  <th className="text-center px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                     Aksi
                   </th>
                 </tr>
@@ -117,16 +117,16 @@ export function ProductTable({ products }: ProductTableProps) {
                 {products.map((product) => (
                   <tr
                     key={product.id}
-                    className={`hover:bg-surface-alt/50 transition-colors ${
+                    className={`hover:bg-slate-50 transition-colors ${
                       !product.is_active ? 'opacity-50' : ''
                     }`}
                   >
-                    <td className="px-5 py-3.5 font-medium text-text-primary">
+                    <td className="px-4 py-2 font-bold text-text-primary text-sm">
                       {product.nama_produk}
                     </td>
-                    <td className="px-5 py-3.5 text-center">
+                    <td className="px-4 py-2 text-center text-sm">
                       <span
-                        className={`inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-full font-semibold text-xs ${
+                        className={`inline-flex items-center justify-center min-w-[1.5rem] px-2 py-0.5 rounded-full font-semibold text-xs ${
                           product.stok_gudang === 0
                             ? 'bg-danger-bg text-danger'
                             : product.stok_gudang <= 10
@@ -137,34 +137,34 @@ export function ProductTable({ products }: ProductTableProps) {
                         {product.stok_gudang}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-right text-text-secondary">
+                    <td className="px-4 py-2 text-right text-text-secondary text-sm">
                       Rp {product.harga_modal.toLocaleString('id-ID')}
                     </td>
-                    <td className="px-5 py-3.5 text-right font-medium text-text-primary">
+                    <td className="px-4 py-2 text-right font-extrabold text-text-primary text-sm">
                       Rp {product.harga_jual.toLocaleString('id-ID')}
                     </td>
-                    <td className="px-5 py-3.5 text-center">
+                    <td className="px-4 py-2 text-center text-sm">
                       <button
                         onClick={() => handleToggle(product.id, product.is_active)}
                         disabled={toggleLoading === product.id}
-                        className="inline-flex items-center gap-1 transition-all"
+                        className="inline-flex items-center gap-1 transition-all cursor-pointer"
                         title={product.is_active ? 'Nonaktifkan' : 'Aktifkan'}
                       >
                         {toggleLoading === product.id ? (
-                          <Loader2 className="w-5 h-5 animate-spin text-text-muted" />
+                          <Loader2 className="w-4 h-4 animate-spin text-text-muted" />
                         ) : product.is_active ? (
-                          <ToggleRight className="w-6 h-6 text-success" />
+                          <ToggleRight className="w-5 h-5 text-success" />
                         ) : (
-                          <ToggleLeft className="w-6 h-6 text-text-muted" />
+                          <ToggleLeft className="w-5 h-5 text-text-muted" />
                         )}
                       </button>
                     </td>
-                    <td className="px-5 py-3.5 text-center">
+                    <td className="px-4 py-2 text-center text-sm">
                       <button
                         onClick={() => openEdit(product)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-usm-primary bg-info-bg hover:bg-usm-primary hover:text-white transition-all"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold text-usm-primary bg-info-bg hover:bg-usm-primary hover:text-white transition-all cursor-pointer"
                       >
-                        <Pencil className="w-3.5 h-3.5" />
+                        <Pencil className="w-3 h-3" />
                         Edit
                       </button>
                     </td>

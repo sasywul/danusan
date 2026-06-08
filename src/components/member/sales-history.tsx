@@ -131,7 +131,7 @@ export function SalesHistory({ initialSales }: SalesHistoryProps) {
               return (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                  className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
                 >
                   <div className="min-w-0 pr-2">
                     <p className="text-sm text-text-primary font-medium leading-relaxed">
@@ -147,10 +147,10 @@ export function SalesHistory({ initialSales }: SalesHistoryProps) {
                   <button
                     onClick={() => handleVoid(item.id, productName)}
                     disabled={isProcessing}
-                    className="shrink-0 px-3 py-1.5 rounded-lg bg-danger-bg hover:bg-danger/10 text-danger text-xs font-semibold border border-danger/10 disabled:opacity-50 transition-all active:scale-95 flex items-center gap-1 cursor-pointer"
+                    className="shrink-0 px-4 py-3 min-h-[48px] rounded-xl bg-danger-bg active:bg-danger/20 text-danger text-sm font-semibold border border-danger/20 disabled:opacity-50 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     {isProcessing ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                     ) : null}
                     Batal
                   </button>
@@ -163,13 +163,15 @@ export function SalesHistory({ initialSales }: SalesHistoryProps) {
 
       {/* ==================== TOAST NOTIFICATION — Fixed to viewport ==================== */}
       {mounted && toastMessage && createPortal(
-        <div className="fixed bottom-24 left-0 right-0 mx-auto w-[90%] max-w-sm z-[9999] pointer-events-auto">
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-[9999] w-[90%] sm:max-w-[350px] pointer-events-auto">
           <div className="bg-text-primary text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl animate-fade-in text-center flex items-center justify-center gap-2">
             <span>{toastMessage}</span>
           </div>
         </div>,
         document.body
       )}
+      {/* Spacer agar tidak terhalang bottom nav */}
+      <div className="h-36 w-full shrink-0"></div>
     </div>
   );
 }

@@ -125,41 +125,45 @@ export default async function AdminMembersPage() {
                 <table className="w-full text-sm text-left">
                   <thead>
                     <tr className="bg-surface-alt border-b border-border">
-                      <th className="px-5 py-3.5 font-bold text-text-secondary text-xs uppercase tracking-wider">
+                      <th className="px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                         Nama Lengkap
                       </th>
-                      <th className="px-5 py-3.5 font-bold text-text-secondary text-xs uppercase tracking-wider">
+                      <th className="px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                         Email Login
                       </th>
-                      <th className="px-5 py-3.5 font-bold text-text-secondary text-xs uppercase tracking-wider">
+                      <th className="px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                         Terdaftar Pada
                       </th>
-                      <th className="px-5 py-3.5 font-bold text-text-secondary text-xs uppercase tracking-wider text-center">
+                      <th className="px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider text-center">
                         Aksi
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {membersList.map((member) => (
-                      <tr key={member.id} className="hover:bg-surface-alt/30 transition-colors">
-                        <td className="px-5 py-4 font-bold text-text-primary text-sm">
+                      <tr key={member.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="px-4 py-2 font-bold text-text-primary text-sm">
                           {member.nama_lengkap}
                         </td>
-                        <td className="px-5 py-4 text-text-secondary font-mono text-xs select-all">
+                        <td className="px-4 py-2 text-text-secondary font-mono text-xs select-all">
                           {member.email}
                         </td>
-                        <td className="px-5 py-4 text-text-muted text-xs inline-flex items-center gap-1.5 mt-0.5 border-b-0">
-                          <Clock className="w-3.5 h-3.5 shrink-0" />
-                          {new Date(member.created_at).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                          })}
+                        <td className="px-4 py-2 text-text-muted text-xs">
+                          <div className="inline-flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 shrink-0" />
+                            <span>
+                              {new Date(member.created_at).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              })}
+                            </span>
+                          </div>
                         </td>
-                        <td className="px-5 py-4 text-center">
+                        <td className="px-4 py-2 text-center text-sm">
                           <Link
                             href={`/admin/members/${member.id}`}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-usm-primary hover:bg-usm-primary-dark text-white rounded-xl text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-usm-primary hover:bg-usm-primary-dark text-white rounded-xl text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
                           >
                             Kelola Stok &rarr;
                           </Link>

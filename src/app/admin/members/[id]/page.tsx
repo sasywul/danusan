@@ -107,28 +107,28 @@ export default async function MemberDetailPage({ params }: PageProps) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-surface-alt">
-                  <th className="text-left px-5 py-3 font-semibold text-text-secondary">Produk</th>
-                  <th className="text-center px-5 py-3 font-semibold text-text-secondary">Jumlah</th>
-                  <th className="text-right px-5 py-3 font-semibold text-text-secondary">Total</th>
-                  <th className="text-right px-5 py-3 font-semibold text-text-secondary">Waktu</th>
+                <tr className="bg-surface-alt border-b border-border">
+                  <th className="text-left px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">Produk</th>
+                  <th className="text-center px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider w-24">Jumlah</th>
+                  <th className="text-right px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">Total</th>
+                  <th className="text-right px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">Waktu</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {(penjualanList || []).map((p) => (
-                  <tr key={p.id} className="hover:bg-surface-alt/50 transition-colors">
-                    <td className="px-5 py-3.5 font-medium text-text-primary">
+                  <tr key={p.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-4 py-2 font-bold text-text-primary text-sm">
                       {(p.products as { nama_produk: string } | null)?.nama_produk || '-'}
                     </td>
-                    <td className="px-5 py-3.5 text-center">
-                      <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-full bg-success-bg text-success font-semibold text-xs">
+                    <td className="px-4 py-2 text-center text-sm">
+                      <span className="inline-flex items-center justify-center min-w-[1.5rem] px-2 py-0.5 rounded-full bg-success-bg text-success font-semibold text-xs">
                         {p.jumlah}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-right font-medium text-text-primary">
+                    <td className="px-4 py-2 text-right font-extrabold text-text-primary text-sm">
                       Rp {p.total_harga.toLocaleString('id-ID')}
                     </td>
-                    <td className="px-5 py-3.5 text-right text-text-secondary text-xs">
+                    <td className="px-4 py-2 text-right text-text-secondary text-xs">
                       {new Date(p.created_at).toLocaleDateString('id-ID', {
                         day: 'numeric',
                         month: 'short',

@@ -100,55 +100,61 @@ export default async function AdminDashboard() {
         </p>
       </div>
 
-      {/* Financial Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="bg-gradient-to-br from-success-bg/60 to-success-bg border border-success/25 rounded-2xl p-6 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {/* Total Kas Masuk */}
+        <div className="bg-gradient-to-br from-success-bg/60 to-success-bg border border-success/25 rounded-2xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow h-28 relative overflow-hidden">
           <div className="space-y-1">
-            <span className="text-[10px] font-extrabold text-success uppercase tracking-wider block">
+            <span className="text-[9px] font-extrabold text-success uppercase tracking-wider block">
               Total Kas Masuk
             </span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-text-primary">
+            <h3 className="text-lg font-bold text-text-primary">
               Rp {totalKasMasuk.toLocaleString('id-ID')}
             </h3>
-            <p className="text-xs text-text-secondary leading-normal">
-              Setoran yang telah diverifikasi dan disetujui.
-            </p>
           </div>
-          <div className="w-12 h-12 bg-success text-white rounded-xl flex items-center justify-center shadow-lg shadow-success/20 shrink-0">
-            <Wallet className="w-6 h-6" />
+          <p className="text-[10px] text-text-secondary leading-tight mt-auto">
+            Setoran terverifikasi.
+          </p>
+          <div className="absolute right-3 bottom-3 w-8 h-8 bg-success text-white rounded-lg flex items-center justify-center shadow-md shadow-success/15 shrink-0 opacity-80">
+            <Wallet className="w-4 h-4" />
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-warning-bg/60 to-warning-bg border border-warning/25 rounded-2xl p-6 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+        {/* Menunggu Konfirmasi */}
+        <div className="bg-gradient-to-br from-warning-bg/60 to-warning-bg border border-warning/25 rounded-2xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow h-28 relative overflow-hidden">
           <div className="space-y-1">
-            <span className="text-[10px] font-extrabold text-warning uppercase tracking-wider block">
+            <span className="text-[9px] font-extrabold text-warning uppercase tracking-wider block">
               Menunggu Konfirmasi
             </span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-text-primary">
+            <h3 className="text-lg font-bold text-text-primary">
               Rp {totalPendingUang.toLocaleString('id-ID')}
             </h3>
-            <p className="text-xs text-text-secondary leading-normal">
-              Setoran member yang perlu diverifikasi.
-            </p>
           </div>
-          <div className="w-12 h-12 bg-warning text-white rounded-xl flex items-center justify-center shadow-lg shadow-warning/20 shrink-0">
-            <TrendingUp className="w-6 h-6" />
+          <p className="text-[10px] text-text-secondary leading-tight mt-auto">
+            Perlu diverifikasi.
+          </p>
+          <div className="absolute right-3 bottom-3 w-8 h-8 bg-warning text-white rounded-lg flex items-center justify-center shadow-md shadow-warning/15 shrink-0 opacity-80">
+            <TrendingUp className="w-4 h-4" />
           </div>
         </div>
-      </div>
 
-      {/* Stats cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Dynamic Stats Cards */}
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="bg-white rounded-2xl border border-border p-5 hover:shadow-md transition-shadow"
+            className="bg-white rounded-2xl border border-border p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-28 relative overflow-hidden"
           >
-            <div className={`inline-flex p-2.5 rounded-xl ${stat.bg} mb-3`}>
-              <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            <div className="space-y-1">
+              <span className="text-[9px] font-extrabold text-text-muted uppercase tracking-wider block">
+                {stat.label}
+              </span>
+              <h3 className="text-lg font-bold text-text-primary">
+                {stat.value}
+              </h3>
             </div>
-            <p className="text-xl font-bold text-text-primary">{stat.value}</p>
-            <p className="text-sm text-text-secondary mt-0.5">{stat.label}</p>
+            <div className="absolute right-3 bottom-3 w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-text-secondary shrink-0">
+              <stat.icon className={`w-4 h-4 ${stat.color}`} />
+            </div>
           </div>
         ))}
       </div>
@@ -168,26 +174,26 @@ export default async function AdminDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-surface-alt">
-                  <th className="text-left px-5 py-3 font-semibold text-text-secondary">Member</th>
-                  <th className="text-center px-5 py-3 font-semibold text-text-secondary">Produk Dijual</th>
-                  <th className="text-center px-5 py-3 font-semibold text-text-secondary">Total Terjual</th>
-                  <th className="text-right px-5 py-3 font-semibold text-text-secondary">Omzet</th>
+                <tr className="bg-surface-alt border-b border-border">
+                  <th className="text-left px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">Member</th>
+                  <th className="text-center px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">Produk Dijual</th>
+                  <th className="text-center px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider w-24">Total Terjual</th>
+                  <th className="text-right px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">Omzet</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {memberSales.map((ms, i) => (
-                  <tr key={i} className="hover:bg-surface-alt/50 transition-colors">
-                    <td className="px-5 py-3.5 font-medium text-text-primary">{ms.nama}</td>
-                    <td className="px-5 py-3.5 text-center text-text-secondary text-xs">
+                  <tr key={i} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-4 py-2 font-bold text-text-primary text-sm">{ms.nama}</td>
+                    <td className="px-4 py-2 text-center text-text-secondary text-xs">
                       {Array.from(ms.products).join(', ')}
                     </td>
-                    <td className="px-5 py-3.5 text-center">
-                      <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-full bg-success-bg text-success font-semibold text-xs">
+                    <td className="px-4 py-2 text-center text-sm">
+                      <span className="inline-flex items-center justify-center min-w-[1.5rem] px-2 py-0.5 rounded-full bg-success-bg text-success font-semibold text-xs">
                         {ms.totalJumlah}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-right font-medium text-text-primary">
+                    <td className="px-4 py-2 text-right font-semibold text-text-primary text-sm">
                       Rp {ms.totalHarga.toLocaleString('id-ID')}
                     </td>
                   </tr>

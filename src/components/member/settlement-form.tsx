@@ -62,7 +62,7 @@ export function SettlementForm({ totalOmzet, outstanding }: SettlementFormProps)
             max={outstanding > 0 ? outstanding : undefined}
             required
             placeholder={outstanding > 0 ? `Max: ${outstanding.toLocaleString('id-ID')}` : '0'}
-            className="w-full px-4 py-3 rounded-xl border border-border bg-white text-text-primary placeholder:text-text-muted focus:border-usm-primary focus:ring-2 focus:ring-usm-primary/20 outline-none text-lg font-medium"
+            className="w-full px-4 py-4 min-h-[48px] rounded-xl border border-border bg-white text-text-primary placeholder:text-text-muted focus:border-usm-primary focus:ring-2 focus:ring-usm-primary/20 outline-none text-lg font-medium"
           />
           <div className="mt-2 space-y-1">
             <p className="text-xs text-text-muted">
@@ -86,7 +86,7 @@ export function SettlementForm({ totalOmzet, outstanding }: SettlementFormProps)
         <button
           type="submit"
           disabled={loading || outstanding <= 0}
-          className="w-full py-3.5 px-4 bg-gradient-to-r from-usm-accent-dark to-usm-accent text-usm-primary-dark font-bold rounded-xl hover:from-usm-accent hover:to-usm-accent-light disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 active:scale-[0.97] shadow-lg shadow-usm-accent/20"
+          className="w-full py-4 px-4 min-h-[48px] bg-gradient-to-r from-usm-accent-dark to-usm-accent text-usm-primary-dark font-bold rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 active:scale-95 active:brightness-90 shadow-lg shadow-usm-accent/20 cursor-pointer"
         >
           {loading ? (
             <>

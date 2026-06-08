@@ -149,104 +149,102 @@ export function MemberSalesView({ initialProducts }: MemberSalesViewProps) {
           <p className="text-sm">Semua produk sedang habis stok.</p>
         </div>
       ) : (
-        <div className="space-y-3 stagger-children">
-          {visibleProducts.map((product) => {
-            const stok = localStoks[product.id] ?? product.stok_gudang;
-            const qty = quantities[product.id] ?? 1;
-            const isHabis = stok <= 0;
-            const isSending = sendingProducts.has(product.id);
-            const subtotal = product.harga_jual * qty;
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6 stagger-children">
+            {visibleProducts.map((product) => {
+              const stok = localStoks[product.id] ?? product.stok_gudang;
+              const qty = quantities[product.id] ?? 1;
+              const isHabis = stok <= 0;
+              const isSending = sendingProducts.has(product.id);
+              const subtotal = product.harga_jual * qty;
 
-            return (
-              <div
-                key={product.id}
-                className={`bg-white rounded-2xl border border-border overflow-hidden transition-all ${isHabis ? 'opacity-50' : ''}`}
-              >
-                <div className="p-4">
-                  {/* Product info */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 bg-gradient-to-br from-usm-primary/10 to-usm-accent/10 rounded-xl flex items-center justify-center shrink-0">
-                        <Package className="w-5 h-5 text-usm-primary" />
-                      </div>
+              return (
+                <div
+                  key={product.id}
+                  className={`bg-white rounded-2xl border border-border overflow-hidden transition-all ${isHabis ? 'opacity-50' : ''}`}
+                >
+                  <div className="p-4 space-y-3">
+                    {/* Baris 1: Nama Produk, Harga (teks abu-abu), dan Sisa Stok */}
+                    <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="font-semibold text-text-primary text-sm leading-tight">
+                        <h4 className="font-bold text-text-primary text-base leading-tight">
                           {product.nama_produk}
                         </h4>
                         <p className="text-xs text-text-muted mt-0.5">
-                          Rp {product.harga_jual.toLocaleString('id-ID')} / pcs
+                          Rp {product.harga_jual.toLocaleString('id-ID')}
                         </p>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-text-muted">Stok</p>
-                      <p className={`font-bold text-sm ${isHabis ? 'text-danger' : stok <= 5 ? 'text-warning' : 'text-success'}`}>
-                        {stok}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Row 1: Quantity Stepper */}
-                  {!isHabis && (
-                    <div className="flex items-center justify-between mb-3 bg-surface-alt rounded-xl p-1.5">
-                      <button
-                        type="button"
-                        onClick={() => setQty(product.id, qty - 1)}
-                        disabled={qty <= 1 || isSending}
-                        className="w-10 h-10 rounded-lg bg-white border border-border flex items-center justify-center text-text-secondary hover:bg-danger-bg hover:text-danger hover:border-danger/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-90 shadow-sm"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-
-                      <div className="flex-1 text-center">
-                        <p className="text-2xl font-bold text-text-primary tabular-nums">{qty}</p>
-                        <p className="text-[10px] text-text-muted -mt-0.5">
-                          = Rp {subtotal.toLocaleString('id-ID')}
-                        </p>
+                      <div className="text-right">
+                        <span className="text-xs text-text-muted">Stok: </span>
+                        <span className={`font-bold text-sm ${isHabis ? 'text-danger' : stok <= 5 ? 'text-warning' : 'text-success'}`}>
+                          {stok}
+                        </span>
                       </div>
-
-                      <button
-                        type="button"
-                        onClick={() => setQty(product.id, qty + 1)}
-                        disabled={qty >= stok || isSending}
-                        className="w-10 h-10 rounded-lg bg-white border border-border flex items-center justify-center text-text-secondary hover:bg-success-bg hover:text-success hover:border-success/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-90 shadow-sm"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
                     </div>
-                  )}
 
-                  {/* Row 2: Main sell button */}
-                  <button
-                    type="button"
-                    onClick={() => handleSell(product)}
-                    disabled={isHabis || isSending}
-                    className={`w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 active:scale-[0.97] transition-all ${
-                      isHabis
-                        ? 'bg-surface-alt text-text-muted cursor-not-allowed'
-                        : isSending
-                        ? 'bg-usm-primary/80 text-white cursor-wait'
-                        : 'bg-gradient-to-r from-usm-primary to-usm-primary-light text-white shadow-lg shadow-usm-primary/20 hover:shadow-xl hover:shadow-usm-primary/30'
-                    }`}
-                  >
-                    {isHabis ? (
-                      <><Check className="w-5 h-5" /> Stok Habis</>
-                    ) : isSending ? (
-                      <><Loader2 className="w-5 h-5 animate-spin" /> Menyimpan...</>
-                    ) : (
-                      <><ShoppingBag className="w-5 h-5" /> Catat Laku {qty}</>
+                    {/* Baris 2 (Stepper): Kontrol kuantitas dengan tombol [ - ], Teks Angka, dan tombol [ + ], tinggi minimal h-12 */}
+                    {!isHabis && (
+                      <div className="flex items-center justify-between bg-surface-alt rounded-xl h-12 overflow-hidden border border-border/50">
+                        <button
+                          type="button"
+                          onClick={() => setQty(product.id, qty - 1)}
+                          disabled={qty <= 1 || isSending}
+                          className="w-12 h-12 rounded-l-xl bg-white border-r border-border flex items-center justify-center text-text-secondary active:scale-95 active:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer font-bold text-lg"
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+
+                        <div className="flex-1 text-center flex items-center justify-center gap-1.5">
+                          <span className="text-lg font-bold text-text-primary tabular-nums">{qty}</span>
+                          <span className="text-xs text-text-muted">
+                            (Rp {subtotal.toLocaleString('id-ID')})
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setQty(product.id, qty + 1)}
+                          disabled={qty >= stok || isSending}
+                          className="w-12 h-12 rounded-r-xl bg-white border-l border-border flex items-center justify-center text-text-secondary active:scale-95 active:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer font-bold text-lg"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
                     )}
-                  </button>
+
+                    {/* Baris 3 (Tombol Aksi): Tombol besar w-full h-12 rounded-xl bg-blue-700 text-white */}
+                    <button
+                      type="button"
+                      onClick={() => handleSell(product)}
+                      disabled={isHabis || isSending}
+                      className={`w-full h-12 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-transform cursor-pointer ${
+                        isHabis
+                          ? 'bg-surface-alt text-text-muted cursor-not-allowed'
+                          : isSending
+                          ? 'bg-blue-700/80 text-white cursor-wait'
+                          : 'bg-blue-700 text-white active:scale-95 active:bg-blue-800'
+                      }`}
+                    >
+                      {isHabis ? (
+                        <><Check className="w-4 h-4" /> Stok Habis</>
+                      ) : isSending ? (
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Menyimpan...</>
+                      ) : (
+                        <><ShoppingBag className="w-4 h-4" /> Catat Laku {qty}</>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+          <div className="h-36 w-full shrink-0"></div>
+        </>
       )}
 
       {/* ==================== UNDO TOAST — Fixed to viewport ==================== */}
       {mounted && pendingSales.length > 0 && createPortal(
-        <div className="fixed bottom-24 left-0 right-0 mx-auto w-[90%] max-w-sm z-[9999] pointer-events-auto">
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-[9999] w-[90%] sm:max-w-[350px] pointer-events-auto">
           <div className="space-y-2">
             {pendingSales.map((ps) => (
               <UndoToastItem key={ps.tempId} pending={ps} onCancel={cancelPendingSale} />
@@ -258,7 +256,7 @@ export function MemberSalesView({ initialProducts }: MemberSalesViewProps) {
 
       {/* ==================== STATUS TOAST — Fixed to viewport ==================== */}
       {mounted && toastMessage && !pendingSales.length && createPortal(
-        <div className="fixed bottom-24 left-0 right-0 mx-auto w-[90%] max-w-sm z-[9999] pointer-events-auto">
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-[9999] w-[90%] sm:max-w-[350px] pointer-events-auto">
           <div className="bg-text-primary text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl animate-fade-in text-center">
             {toastMessage}
           </div>
@@ -297,7 +295,7 @@ function UndoToastItem({ pending, onCancel }: { pending: PendingSale; onCancel: 
         </p>
         <button
           onClick={() => onCancel(pending.tempId)}
-          className="shrink-0 ml-3 px-3 py-1 rounded-lg bg-white/20 text-white text-xs font-bold hover:bg-white/30 active:scale-95 transition-all flex items-center gap-1"
+          className="shrink-0 ml-3 px-4 py-3 min-h-[48px] rounded-xl bg-white/20 text-white text-xs font-bold active:bg-white/30 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
         >
           <Undo2 className="w-3.5 h-3.5" />
           BATALKAN

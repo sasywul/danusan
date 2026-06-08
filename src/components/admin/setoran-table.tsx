@@ -74,20 +74,20 @@ export function SetoranTable({ setoranList }: SetoranTableProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-surface-alt">
-                <th className="text-left px-5 py-3 font-semibold text-text-secondary">
+              <tr className="bg-surface-alt border-b border-border">
+                <th className="text-left px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                   Member
                 </th>
-                <th className="text-right px-5 py-3 font-semibold text-text-secondary">
+                <th className="text-right px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                   Total Setoran
                 </th>
-                <th className="text-center px-5 py-3 font-semibold text-text-secondary">
+                <th className="text-center px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                   Status
                 </th>
-                <th className="text-center px-5 py-3 font-semibold text-text-secondary">
+                <th className="text-center px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                   Tanggal
                 </th>
-                <th className="text-center px-5 py-3 font-semibold text-text-secondary">
+                <th className="text-center px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                   Aksi
                 </th>
               </tr>
@@ -96,28 +96,28 @@ export function SetoranTable({ setoranList }: SetoranTableProps) {
               {setoranList.map((setoran) => (
                 <tr
                   key={setoran.id}
-                  className="hover:bg-surface-alt/50 transition-colors"
+                  className="hover:bg-slate-50 transition-colors"
                 >
-                  <td className="px-5 py-3.5 font-medium text-text-primary">
+                  <td className="px-4 py-2 font-bold text-text-primary text-sm">
                     {setoran.profiles?.nama_lengkap || '-'}
                   </td>
-                  <td className="px-5 py-3.5 text-right font-semibold text-text-primary">
+                  <td className="px-4 py-2 text-right font-extrabold text-text-primary text-sm">
                     Rp {setoran.total_uang_disetor.toLocaleString('id-ID')}
                   </td>
-                  <td className="px-5 py-3.5 text-center">
+                  <td className="px-4 py-2 text-center text-sm">
                     {setoran.status_setoran === 'pending' ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning-bg text-warning text-xs font-semibold">
-                        <Clock className="w-3.5 h-3.5" />
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-warning-bg text-warning text-xs font-semibold">
+                        <Clock className="w-3 h-3" />
                         Pending
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success-bg text-success text-xs font-semibold">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-success-bg text-success text-xs font-semibold">
+                        <Check className="w-3.5 h-3.5" />
                         Approved
                       </span>
                     )}
                   </td>
-                  <td className="px-5 py-3.5 text-center text-text-secondary text-xs">
+                  <td className="px-4 py-2 text-center text-text-secondary text-xs">
                     {new Date(setoran.created_at).toLocaleDateString('id-ID', {
                       day: 'numeric',
                       month: 'short',
@@ -126,12 +126,12 @@ export function SetoranTable({ setoranList }: SetoranTableProps) {
                       minute: '2-digit',
                     })}
                   </td>
-                  <td className="px-5 py-3.5 text-center">
+                  <td className="px-4 py-2 text-center text-sm">
                     {setoran.status_setoran === 'pending' ? (
                       <button
                         onClick={() => handleApprove(setoran.id)}
                         disabled={loadingId === setoran.id}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success text-white text-xs font-semibold hover:bg-success/90 disabled:opacity-50 transition-all active:scale-95"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-success text-white text-xs font-semibold hover:bg-success/90 disabled:opacity-50 transition-all active:scale-95 cursor-pointer"
                       >
                         {loadingId === setoran.id ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />

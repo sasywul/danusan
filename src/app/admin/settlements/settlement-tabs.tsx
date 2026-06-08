@@ -124,20 +124,20 @@ export function SettlementTabs({ initialSetoran }: SettlementTabsProps) {
             <table className="w-full text-sm text-left">
               <thead>
                 <tr className="bg-surface-alt border-b border-border">
-                  <th className="px-5 py-3.5 font-bold text-text-secondary text-xs uppercase tracking-wider">
+                  <th className="px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                     Nama Member
                   </th>
-                  <th className="px-5 py-3.5 font-bold text-text-secondary text-xs uppercase tracking-wider text-right">
+                  <th className="px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider text-right">
                     Nominal Disetor
                   </th>
-                  <th className="px-5 py-3.5 font-bold text-text-secondary text-xs uppercase tracking-wider">
+                  <th className="px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider">
                     Tanggal / Waktu
                   </th>
-                  <th className="px-5 py-3.5 font-bold text-text-secondary text-xs uppercase tracking-wider text-center">
+                  <th className="px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider text-center">
                     Status
                   </th>
                   {activeTab === 'pending' && (
-                    <th className="px-5 py-3.5 font-bold text-text-secondary text-xs uppercase tracking-wider text-center w-36">
+                    <th className="px-4 py-2 font-bold text-text-secondary text-xs uppercase tracking-wider text-center w-36">
                       Aksi
                     </th>
                   )}
@@ -145,19 +145,19 @@ export function SettlementTabs({ initialSetoran }: SettlementTabsProps) {
               </thead>
               <tbody className="divide-y divide-border">
                 {currentRecords.map((setoran) => (
-                  <tr key={setoran.id} className="hover:bg-surface-alt/30 transition-colors">
+                  <tr key={setoran.id} className="hover:bg-slate-50 transition-colors">
                     {/* Member Name */}
-                    <td className="px-5 py-4 font-bold text-text-primary text-sm">
+                    <td className="px-4 py-2 font-bold text-text-primary text-sm">
                       {setoran.profiles?.nama_lengkap || 'Tidak Dikenal'}
                     </td>
 
                     {/* Amount */}
-                    <td className="px-5 py-4 text-right font-extrabold text-text-primary text-sm">
+                    <td className="px-4 py-2 text-right font-extrabold text-text-primary text-sm">
                       Rp {setoran.total_uang_disetor.toLocaleString('id-ID')}
                     </td>
 
                     {/* Date / Time */}
-                    <td className="px-5 py-4 text-text-secondary text-xs">
+                    <td className="px-4 py-2 text-text-secondary text-xs">
                       <div className="flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5 text-text-muted shrink-0" />
                         <span>
@@ -176,9 +176,9 @@ export function SettlementTabs({ initialSetoran }: SettlementTabsProps) {
                     </td>
 
                     {/* Status Badge */}
-                    <td className="px-5 py-4 text-center">
+                    <td className="px-4 py-2 text-center">
                       <span
-                        className={`inline-flex px-2.5 py-0.5 rounded-full text-3xs font-extrabold uppercase tracking-wider ${
+                        className={`inline-flex px-2 py-0.5 rounded-full text-3xs font-extrabold uppercase tracking-wider ${
                           setoran.status_setoran === 'pending'
                             ? 'bg-warning-bg text-warning'
                             : 'bg-success-bg text-success'
@@ -190,12 +190,12 @@ export function SettlementTabs({ initialSetoran }: SettlementTabsProps) {
 
                     {/* Action Button */}
                     {activeTab === 'pending' && (
-                      <td className="px-5 py-4 text-center">
+                      <td className="px-4 py-2 text-center">
                         <button
                           type="button"
                           onClick={() => handleApprove(setoran.id)}
                           disabled={loadingId !== null}
-                          className="w-full py-1.5 px-3 bg-usm-primary hover:bg-usm-primary-dark text-white font-bold rounded-xl text-2xs flex items-center justify-center gap-1 active:scale-[0.97] disabled:opacity-50 transition-all cursor-pointer shadow-sm"
+                          className="w-full py-1 px-3 bg-usm-primary hover:bg-usm-primary-dark text-white font-bold rounded-xl text-2xs flex items-center justify-center gap-1 active:scale-[0.97] disabled:opacity-50 transition-all cursor-pointer shadow-sm"
                         >
                           {loadingId === setoran.id ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
