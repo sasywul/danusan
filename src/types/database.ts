@@ -18,14 +18,14 @@ export interface Product {
   updated_at: string;
 }
 
-export interface UserStock {
+export interface Penjualan {
   id: string;
   user_id: string;
   product_id: string;
-  jumlah_diambil: number;
-  jumlah_laku: number;
+  jumlah: number;
+  harga_satuan: number;
+  total_harga: number;
   created_at: string;
-  updated_at: string;
 }
 
 export interface Setoran {
@@ -38,11 +38,11 @@ export interface Setoran {
 }
 
 // Composite / join types
-export interface UserStockWithProduct extends UserStock {
+export interface PenjualanWithProduct extends Penjualan {
   products: Product;
 }
 
-export interface UserStockWithProductAndProfile extends UserStock {
+export interface PenjualanWithProductAndProfile extends Penjualan {
   products: Product;
   profiles: Profile;
 }

@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { logout } from '@/actions/auth';
-import { ShoppingBag, Receipt, LogOut, Package } from 'lucide-react';
+import { ShoppingBag, Receipt, LogOut, History } from 'lucide-react';
 
 const navItems = [
   { href: '/member', label: 'Penjualan', icon: ShoppingBag },
-  { href: '/member/stocks', label: 'Stok Barang', icon: Package },
+  { href: '/member/history', label: 'Riwayat', icon: History },
   { href: '/member/settlement', label: 'Setoran', icon: Receipt },
 ];
 
@@ -52,7 +52,7 @@ export default function MemberLayout({
       </main>
 
       {/* Bottom navigation */}
-      <nav className="sticky bottom-0 bg-white border-t border-border safe-area-inset-bottom">
+      <nav className="sticky bottom-0 bg-white border-t border-border safe-area-inset-bottom z-10">
         <div className="max-w-lg mx-auto flex">
           {navItems.map((item) => {
             const isActive =
@@ -63,7 +63,7 @@ export default function MemberLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${
+                className={`flex-1 flex flex-col items-center gap-1 py-3 relative transition-colors ${
                   isActive
                     ? 'text-usm-primary'
                     : 'text-text-muted hover:text-text-secondary'

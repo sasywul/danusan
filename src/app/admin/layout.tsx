@@ -8,7 +8,6 @@ import { getPendingSetoranCount } from '@/actions/setoran';
 import {
   LayoutDashboard,
   Package,
-  Truck,
   LogOut,
   Menu,
   X,
@@ -21,7 +20,6 @@ import {
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/products', label: 'Produk', icon: Package },
-  { href: '/admin/distribution', label: 'Distribusi', icon: Truck },
   { href: '/admin/members', label: 'Members', icon: Users },
   { href: '/admin/monitoring', label: 'Pantau Member', icon: Eye },
   { href: '/admin/settlements', label: 'Setoran', icon: Receipt },

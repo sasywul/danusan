@@ -6,9 +6,10 @@ import { Loader2, Send, Wallet } from 'lucide-react';
 
 interface SettlementFormProps {
   totalOmzet: number;
+  outstanding: number;
 }
 
-export function SettlementForm({ totalOmzet }: SettlementFormProps) {
+export function SettlementForm({ totalOmzet, outstanding }: SettlementFormProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{
     type: 'success' | 'error';
@@ -58,20 +59,34 @@ export function SettlementForm({ totalOmzet }: SettlementFormProps) {
             name="total_uang_disetor"
             type="number"
             min="1"
+            max={outstanding > 0 ? outstanding : undefined}
             required
-            placeholder={`cth: ${totalOmzet}`}
+            placeholder={outstanding > 0 ? `Max: ${outstanding.toLocaleString('id-ID')}` : '0'}
             className="w-full px-4 py-3 rounded-xl border border-border bg-white text-text-primary placeholder:text-text-muted focus:border-usm-primary focus:ring-2 focus:ring-usm-primary/20 outline-none text-lg font-medium"
           />
-          <p className="text-xs text-text-muted mt-1.5">
-            Total omzet Anda saat ini:{' '}
-            <strong>Rp {totalOmzet.toLocaleString('id-ID')}</strong>
-          </p>
+          <div className="mt-2 space-y-1">
+            <p className="text-xs text-text-muted">
+              Total omzet:{' '}
+              <strong>Rp {totalOmzet.toLocaleString('id-ID')}</strong>
+            </p>
+            {outstanding > 0 && (
+              <p className="text-xs text-warning font-medium">
+                Tagihan belum disetor:{' '}
+                <strong>Rp {outstanding.toLocaleString('id-ID')}</strong>
+              </p>
+            )}
+            {outstanding <= 0 && totalOmzet > 0 && (
+              <p className="text-xs text-success font-medium">
+                ✓ Semua tagihan sudah lunas!
+              </p>
+            )}
+          </div>
         </div>
 
         <button
           type="submit"
-          disabled={loading}
-          className="w-full py-3.5 px-4 bg-gradient-to-r from-usm-accent-dark to-usm-accent text-usm-primary-dark font-bold rounded-xl hover:from-usm-accent hover:to-usm-accent-light disabled:opacity-50 transition-all flex items-center justify-center gap-2 active:scale-[0.97] shadow-lg shadow-usm-accent/20"
+          disabled={loading || outstanding <= 0}
+          className="w-full py-3.5 px-4 bg-gradient-to-r from-usm-accent-dark to-usm-accent text-usm-primary-dark font-bold rounded-xl hover:from-usm-accent hover:to-usm-accent-light disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 active:scale-[0.97] shadow-lg shadow-usm-accent/20"
         >
           {loading ? (
             <>

@@ -1,23 +1,24 @@
-import { getUserStocksForMember } from '@/actions/sales';
+import { getActiveProducts } from '@/actions/products';
+import { getPenjualanForMember } from '@/actions/penjualan';
 import { getProfile } from '@/actions/auth';
-import { ProductCard } from '@/components/member/product-card';
-import { ShoppingBag } from 'lucide-react';
+import { MemberSalesView } from '@/components/member/member-sales-view';
+
+export const revalidate = 0; // Always fetch fresh data
 
 export default async function MemberPage() {
-  const [userStocks, profile] = await Promise.all([
-    getUserStocksForMember(),
+  const [products, penjualanList, profile] = await Promise.all([
+    getActiveProducts(),
+    getPenjualanForMember(),
     getProfile(),
   ]);
 
-  const totalTerjual = userStocks.reduce((sum, s) => sum + s.jumlah_laku, 0);
-  const totalOmzet = userStocks.reduce(
-    (sum, s) => sum + s.jumlah_laku * (s.products?.harga_jual || 0),
-    0
-  );
+  // Calculate member stats from committed penjualan
+  const totalTerjual = penjualanList.reduce((sum, p) => sum + p.jumlah, 0);
+  const totalOmzet = penjualanList.reduce((sum, p) => sum + p.total_harga, 0);
 
   return (
     <div className="space-y-5 animate-fade-in pb-4">
-      {/* Greeting */}
+      {/* Greeting card */}
       <div className="bg-gradient-to-br from-usm-primary to-usm-primary-light rounded-2xl p-5 text-white">
         <p className="text-white/70 text-sm">Halo,</p>
         <h2 className="text-xl font-bold mt-0.5">
@@ -37,28 +38,10 @@ export default async function MemberPage() {
         </div>
       </div>
 
-      {/* Products */}
-      <div className="flex items-center gap-2 px-1">
-        <ShoppingBag className="w-5 h-5 text-usm-primary" />
-        <h3 className="font-semibold text-text-primary">Produk Saya</h3>
-        <span className="text-xs text-text-muted bg-surface-alt px-2 py-0.5 rounded-full">
-          {userStocks.length}
-        </span>
-      </div>
-
-      {userStocks.length === 0 ? (
-        <div className="text-center py-12 text-text-muted">
-          <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p className="text-sm">Belum ada produk yang dialokasikan.</p>
-          <p className="text-xs mt-1">Hubungi admin untuk distribusi stok.</p>
-        </div>
-      ) : (
-        <div className="space-y-3 stagger-children">
-          {userStocks.map((stock) => (
-            <ProductCard key={stock.id} stock={stock} />
-          ))}
-        </div>
-      )}
+      {/* Products + Quick Undo Toast — all managed client-side */}
+      <MemberSalesView
+        initialProducts={products}
+      />
     </div>
   );
 }
